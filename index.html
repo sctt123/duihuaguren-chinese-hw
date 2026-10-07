@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>七月二十八</title>
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><rect width="16" height="16" fill="%2314100c"/><circle cx="8" cy="8" r="4.5" fill="%23d9a441"/></svg>'>
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@500;700;900&display=swap">
+<style>
+:root{--bg:#14100c;--panel:#efe3c8;--panel2:#e2d0aa;--ink:#241a12;--red:#a5311f;--green:#3f6b4f;--gold:#d9a441;--dim:#9c8f75}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--panel);font-family:'Noto Serif SC','Songti SC','SimSun',serif;line-height:1.85}
+.game{max-width:760px;margin:0 auto;padding:14px 14px 40px}
+.view{display:none}
+.view.active{display:block;animation:rise .45s ease}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+img{display:block}
+.frame{border:3px solid #000;box-shadow:6px 6px 0 rgba(0,0,0,.55)}
+/* ---- 顶栏：六日进度 + 四值 ---- */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0 12px;flex-wrap:wrap}
+.dots{display:flex;gap:6px}
+.dots i{width:22px;height:22px;border:2px solid #000;background:#3a2d1e;color:#6f6350;font-style:normal;font-size:12px;display:flex;align-items:center;justify-content:center;box-shadow:2px 2px 0 rgba(0,0,0,.5)}
+.dots i.done{background:var(--green);color:#f5ecd8}
+.dots i.cur{background:var(--gold);color:#241a12;font-weight:900}
+.stats{display:flex;gap:8px;flex-wrap:wrap}
+.stat{display:flex;align-items:center;gap:5px;background:#221a10;border:2px solid #000;box-shadow:2px 2px 0 rgba(0,0,0,.5);padding:3px 6px;font-size:12px}
+.stat b{color:var(--gold);font-weight:700;width:14px}
+.bar{display:flex;gap:1px}
+.bar i{width:5px;height:10px;background:#4a3a26}
+.bar i.on{background:var(--gold)}
+/* ---- 标题页 ---- */
+.title-wrap{position:relative}
+.title-img{width:100%;aspect-ratio:16/9;object-fit:cover}
+.title-inner{position:absolute;left:0;right:0;bottom:0;padding:26px 18px 14px;background:linear-gradient(to top,rgba(10,7,4,.92) 30%,rgba(10,7,4,0))}
+.title-inner h1{font-size:30px;font-weight:900;color:#f5e9cd;letter-spacing:2px;text-shadow:2px 2px 0 #000}
+.title-inner p{font-size:13px;color:var(--gold);margin-top:4px;letter-spacing:1px}
+.title-note{font-size:13.5px;color:#c9b98f;text-align:center;margin:18px auto 16px;max-width:560px;line-height:2}
+.title-note em{font-style:normal;color:var(--gold)}
+/* ---- 按钮 ---- */
+.btn{display:block;width:100%;border:2px solid #000;box-shadow:4px 4px 0 rgba(0,0,0,.55);padding:13px 16px;font-family:inherit;font-size:15px;text-align:left;cursor:pointer;background:var(--panel2);color:var(--ink);transition:transform .06s}
+.btn:hover{background:#f0e2c2}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 rgba(0,0,0,.55)}
+.btn + .btn{margin-top:10px}
+.btn-primary{background:var(--gold);color:#241a12;font-weight:700;text-align:center;font-size:16px;letter-spacing:2px}
+.btn-primary:hover{background:#e6b73f}
+/* ---- 日内 ---- */
+.day-head{text-align:center;font-size:15px;font-weight:700;color:var(--gold);letter-spacing:3px;margin:0 0 12px}
+.img-box{position:relative}
+.img-box img{width:100%;aspect-ratio:16/9;object-fit:cover}
+.img-tag{position:absolute;top:8px;left:8px;background:rgba(20,16,12,.78);border:1px solid #000;color:#e8d9b0;font-size:11px;padding:2px 8px;letter-spacing:1px}
+.text-box{background:var(--panel);color:var(--ink);border:3px solid #000;box-shadow:5px 5px 0 rgba(0,0,0,.55);padding:16px 18px;margin-top:14px;font-size:15.5px;white-space:pre-line;min-height:110px}
+.choices{margin-top:14px}
+.fade{animation:fadeIn .5s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.foot{margin-top:22px;text-align:center;font-size:11.5px;color:#6f6350;line-height:1.9}
+/* ---- 结局 ---- */
+.end-title{text-align:center;font-size:26px;font-weight:900;color:var(--gold);letter-spacing:4px;margin:26px 0 4px;text-shadow:2px 2px 0 #000}
+.end-sub{text-align:center;font-size:13px;color:var(--dim);margin-bottom:16px;letter-spacing:2px}
+.end-img{width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:14px}
+.recap{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0}
+.recap .cell{background:#221a10;border:2px solid #000;box-shadow:3px 3px 0 rgba(0,0,0,.5);padding:10px 8px;text-align:center}
+.recap .cell b{display:block;color:var(--gold);font-size:13px;margin-bottom:6px}
+.recap .cell span{color:#e8d9b0;font-size:15px;font-weight:700}
+.recap .bar{justify-content:center;margin-top:6px}
+@media(max-width:560px){
+  .title-inner h1{font-size:24px}
+  .text-box{font-size:14.5px;padding:14px}
+  .recap{grid-template-columns:repeat(2,1fr)}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="game">
+
+  <!-- ===== 视图：标题 ===== -->
+  <section id="view-title" class="view active">
+    <div class="title-wrap frame">
+      <img class="title-img" src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/ZZaAbGVrmo0BmHxxc8Acmmj0nLb" alt="赤壁月夜孤舟">
+      <div class="title-inner">
+        <h1>七月二十八</h1>
+        <p>穿越成苏东坡的一天 · 像素风文字游戏</p>
+      </div>
+    </div>
+    <p class="title-note">
+      元丰二年七月二十八日，乌台诗案，湖州赴捕。<br>
+      建中靖国元年七月二十八日，常州，弥留。<br>
+      二十二年，同一个日子，一头一尾。<em>你越是赢，越是输；唯一的赢，是旷达。</em><br>
+      你有六次机会，活成苏东坡。
+    </p>
+    <button class="btn btn-primary" id="btn-start">开　始</button>
+    <p class="foot">本作情节大体有史可依，涉及笔记野史处已尽量存疑标注<br>六日：湖州／黄州／杭州／惠州／儋州／常州　·　图：AI生成像素风</p>
+  </section>
+
+  <!-- ===== 顶栏（游戏中常驻） ===== -->
+  <div class="topbar" id="topbar" style="display:none">
+    <div class="dots" id="dots"></div>
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <!-- ===== 视图：六日 ===== -->
+  <section id="view-d1" class="view">
+    <div class="day-head">元丰二年 · 七月二十八日 · 湖州</div>
+    <div class="img-box frame"><span class="img-tag">湖州 · 1079</span><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/CohAbWKMforNTzxUFsPcW4yxn7b" alt="湖州官署清晨"></div>
+    <div class="text-box fade" id="d1-text"></div>
+    <div class="choices" id="d1-choices"></div>
+  </section>
+
+  <section id="view-d2" class="view">
+    <div class="day-head">元丰五年 · 七月二十八日 · 黄州</div>
+    <div class="img-box frame"><span class="img-tag">黄州 · 1082</span><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/WavcbGEaiod5VVxnbAdcvUfRnpg" alt="黄州雨中竹林"></div>
+    <div class="text-box fade" id="d2-text"></div>
+    <div class="choices" id="d2-choices"></div>
+  </section>
+
+  <section id="view-d3" class="view">
+    <div class="day-head">元祐四年 · 七月二十八日 · 杭州</div>
+    <div class="img-box frame"><span class="img-tag">杭州 · 1089</span><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/Yh41b5Mdao3n5pxDetHcEDwOnTf" alt="杭州苏堤"></div>
+    <div class="text-box fade" id="d3-text"></div>
+    <div class="choices" id="d3-choices"></div>
+  </section>
+
+  <section id="view-d4" class="view">
+    <div class="day-head">绍圣三年 · 七月二十八日 · 惠州</div>
+    <div class="img-box frame"><span class="img-tag">惠州 · 1096</span><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/KhLhb0cbOoiWtuxojTGcRnKbnLb" alt="惠州孤山朝云墓"></div>
+    <div class="text-box fade" id="d4-text"></div>
+    <div class="choices" id="d4-choices"></div>
+  </section>
+
+  <section id="view-d5" class="view">
+    <div class="day-head">绍圣四年 · 七月二十八日 · 儋州</div>
+    <div class="img-box frame"><span class="img-tag">儋州 · 1097</span><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/SHpfbho3voQIo0xGxBTcu98EnAV" alt="儋州海岛讲学"></div>
+    <div class="text-box fade" id="d5-text"></div>
+    <div class="choices" id="d5-choices"></div>
+  </section>
+
+  <section id="view-d6" class="view">
+    <div class="day-head">建中靖国元年 · 七月二十八日 · 常州</div>
+    <div class="img-box frame"><span class="img-tag">常州 · 1101</span><img src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/JChYb2DT5okTEixkd5fcMf0vnzf" alt="常州病榻弥留"></div>
+    <div class="text-box fade" id="d6-text"></div>
+    <div class="choices" id="d6-choices"></div>
+  </section>
+
+  <!-- ===== 视图：结局 ===== -->
+  <section id="view-end" class="view">
+    <h2 class="end-title" id="end-title"></h2>
+    <p class="end-sub">建中靖国元年 · 七月二十八日 · 常州</p>
+    <img class="end-img frame" src="https://media.doubao.com/space/api/box/stream/download/all_by_mount_point/JChYb2DT5okTEixkd5fcMf0vnzf" alt="常州">
+    <div class="text-box" id="end-text"></div>
+    <div class="recap" id="recap"></div>
+    <button class="btn btn-primary" id="btn-restart">再 来 一 次</button>
+    <p class="foot">仕——官途事功　文——文章传世　情——亲情故旧　旷——旷达心境<br>三值会互相拆台，只有旷，能把输过成不悔</p>
+  </section>
+
+</div>
+
+<script>
+/* ===== 数据 ===== */
+var STAT_KEYS = ['仕','文','情','旷'];
+var S = { stats:{仕:5,文:5,情:5,旷:5}, day:0, step:0 };
+
+var DAYS = [
+  {
+    head:'湖州 · 1079',
+    intro:'卯时，湖州衙署。昨夜刚写完《湖州谢上表》，那句“难以追陪新进”，是你亲手写的。\n\n王闰之抱着诗稿站在门口，神色不安：「外头都在传你讥讽新法……这诗稿，烧了吧。」',
+    c1:{ label:'「烧了就烧了。诗在肚子里，烧不掉。」', effect:{旷:1,文:-1}, result:'王闰之叹口气，把诗稿投进火盆。火光映着你的脸，你忽然觉得心里松了一块。' },
+    c2:{ label:'「都是心血。天塌下来，有我顶着。」', effect:{文:1,仕:-1}, result:'王闰之抱着诗稿退进内室，一步三回头。字是保住了，可那些字，迟早要见官。' },
+    mid:'午时，太常博士皇甫遵至。你着朝服出迎，看清他身后兵卒，才知祸至。王闰之在檐下，哭成了泪人。',
+    m1:{ label:'从容登舟，回头望一眼妻与弟：「与君世世为兄弟。」', effect:{旷:1}, result:'你登舟，没有回头。湖州城渐渐小了。乌台，在千里之外等着你。' },
+    m2:{ label:'抗辩拒捕：「何罪之有！」', effect:{仕:-1,旷:-1}, result:'兵卒一拥而上，你被按在阶前，官袍沾了泥。满城人看着，你走的时候脊背挺得笔直。' },
+    outro:'船离湖州。你忽然想起二十年前进京赶考，也是这样一条船。那时你十九岁，以为天地都是你的。'
+  },
+  {
+    head:'黄州 · 1082',
+    intro:'贬谪的第三个年头。你在东坡开垦了一块田，日子过成了农夫模样。\n\n今日去沙湖看田，归途暴雨忽至。同行者狼狈奔走，只有你拄着竹杖，在雨里慢慢走。',
+    c1:{ label:'吟啸徐行：「莫听穿林打叶声，何妨吟啸且徐行。」', effect:{旷:2,文:1}, result:'雨打竹叶，你走得比谁都慢，也比谁都稳。雨停时，太阳从云缝里漏下来，你觉得自己像换了个人。' },
+    c2:{ label:'随众人跑去避雨', effect:{旷:-1}, result:'你在檐下蹲了一下午，浑身湿透，心里空落落的。不知是雨凉，还是心凉。' },
+    mid:'夜里，陈季常提着酒来访，问你还写不写诗。',
+    m1:{ label:'把新写的《定风波》拿给他看', effect:{文:1,情:1}, result:'季常读了，半晌没说话。末了他把酒盏举起来：「为这一首，值得今晚不醉不归。」' },
+    m2:{ label:'推说早已不写了', effect:{文:-1,情:-1}, result:'季常一愣，也没追问。那晚酒喝得很闷，你送他出门，见他背影消失在月色里，心里堵得慌。' },
+    outro:'你送季常出门，月色很好。黄州三年，好像把什么都磨平了，又好像什么都没磨掉。'
+  },
+  {
+    head:'杭州 · 1089',
+    intro:'你在杭州修堤。新党说你劳民伤财，旧党说你借堤收买人心。\n\n堤上柳树才栽下，民工挑着土石从你面前走过。有人停下来，等着看你停工的命令。',
+    c1:{ label:'继续修。「堤要修。骂名，我担着。」', effect:{仕:2,旷:-1}, result:'你挥挥手，民工们又挑起担子。骂声渐起，堤却一天天长起来。你夜里常常睡不着，可白天站在堤上，心里是踏实的。' },
+    c2:{ label:'停工自保', effect:{仕:-1,旷:-1,文:1}, result:'你下了停工令。夜里翻来覆去，听见湖浪拍岸，像在骂你。你披衣起来写了一首诗，又有什么用呢。' },
+    mid:'堤成那日，百姓担着酒来谢你。',
+    m1:{ label:'与民同饮，来者不拒', effect:{情:2,旷:1}, result:'酒是粗酒，人是真的人。你喝到半醉，有人喊了一声“苏公堤”，满堤的人都跟着喊起来。' },
+    m2:{ label:'闭门谢客，独自读书', effect:{文:1}, result:'你躲开了热闹。夜里读书，墨香里仿佛还听得见外面的笑声。热闹没有怪你，是你自己错过了。' },
+    outro:'堤名“苏公堤”。千年之后，人们未必记得党争，但记得这条堤。'
+  },
+  {
+    head:'惠州 · 1096',
+    intro:'贬惠州的第二年。七月五日，朝云走了。你把她葬在西湖孤山栖禅寺旁的松林里。\n\n今日是她的三七。你站在墓前，站了很久。',
+    c1:{ label:'提笔作《悼朝云》', effect:{文:2,情:1}, result:'墨落在纸上，像泪。你想起她总说你的满腹不合时宜——如今这话，再没人说了。' },
+    c2:{ label:'什么也不写，只站着', effect:{情:2,旷:1}, result:'风过松林，松针簌簌地落。有些话不必成诗。你站到黄昏，才慢慢下山。' },
+    mid:'归途，岭南人提着一筐荔枝拦住你：「先生，尝尝。」',
+    m1:{ label:'作诗自嘲：「日啖荔枝三百颗，不辞长作岭南人。」', effect:{文:1,旷:1,仕:-1}, result:'你笑着收下荔枝。瘴疠之地，你偏把日子过出甜味来。朝报传到京城，又有人记了你一笔。' },
+    m2:{ label:'谢过，不再提诗', effect:{仕:1,旷:-1}, result:'你怕了。诗惹祸，你怕了。荔枝很甜，可你吃不出滋味。' },
+    outro:'岭南瘴疠之地，你把日子过出了甜味。这是你的本事，也是你的劫。'
+  },
+  {
+    head:'儋州 · 1097',
+    intro:'儋州。海南，宋代最远的贬所。\n\n你在桄榔林下的茅屋里住下，潮气重，海风咸。黎家小孩好奇地围着你这个白须老翁。',
+    c1:{ label:'办学授徒', effect:{情:2,文:1}, result:'黎家子弟围坐听书。你教他们识字，他们教你认草药。海风里，你忽然觉得这贬所也不算太坏。' },
+    c2:{ label:'闭户著书', effect:{文:2}, result:'海风里读书写字，与世隔绝。你把半生的道理都写下来，像给千年后的人留话。' },
+    mid:'夜，潮声如鼓。你想起子由——这封信，寄，还是不寄？',
+    m1:{ label:'写信给他', effect:{情:2}, result:'“与君世世为兄弟”——半生过去，你仍是想念弟弟的哥哥。信写得很长，鸡鸣时才搁笔。' },
+    m2:{ label:'不寄。有些话，说给海听', effect:{旷:2}, result:'你把信收进木箱，披衣出门。潮声一阵一阵，像应答。天海之间，你一个人，却觉得并不孤单。' },
+    outro:'三年后，你遇赦北归。渡海那夜你写：九死南荒吾不恨，兹游奇绝冠平生。'
+  },
+  {
+    head:'常州 · 1101',
+    intro:'你病得很重。窗外月色正好。\n\n维琳法师立在榻旁，轻声问：「端明，可要念西方？」',
+    c1:{ label:'用力念起来', effect:{旷:-2}, result:'你攥紧被角，一字一句念起来。可越是用力，越是飘忽。这世间的债，你还想再多还一点。带着执念，你走了。' },
+    c2:{ label:'睁开眼，笑了笑：「着力即差。」', effect:{旷:2}, result:'「西方不无，但个里着力不得。」顿了顿——「着力即差。」\n\n你合上眼，像放下最后一笔账。月色从窗外淌进来，把什么都洗得干干净净。' }
+  }
+];
+
+/* ===== 工具 ===== */
+function $(id){ return document.getElementById(id); }
+function show(id){
+  var views = document.querySelectorAll('.view');
+  for (var i=0;i<views.length;i++) views[i].classList.remove('active');
+  $(id).classList.add('active');
+  $('topbar').style.display = (id==='view-title') ? 'none' : 'flex';
+  window.scrollTo(0,0);
+}
+function applyEffect(eff){
+  for (var k in eff){ S.stats[k] = Math.max(0, S.stats[k] + eff[k]); }
+  renderStats();
+}
+function renderStats(){
+  var html = '';
+  for (var i=0;i<STAT_KEYS.length;i++){
+    var k = STAT_KEYS[i], v = Math.min(10, Math.round(S.stats[k]));
+    var segs = '';
+    for (var j=0;j<10;j++) segs += (j<v) ? '<i class="on"></i>' : '<i></i>';
+    html += '<div class="stat"><b>'+k+'</b><span class="bar">'+segs+'</span></div>';
+  }
+  $('stats').innerHTML = html;
+}
+function renderDots(cur){
+  var html = '';
+  for (var i=0;i<6;i++){
+    var cls = (i<cur) ? 'done' : (i===cur ? 'cur' : '');
+    html += '<i class="'+cls+'">'+(i+1)+'</i>';
+  }
+  $('dots').innerHTML = html;
+}
+function setText(id, txt){
+  var el = $(id);
+  el.innerHTML = txt.replace(/「([^」]*)」/g, '<span class="q">「$1」</span>');
+  el.classList.remove('fade');
+  void el.offsetWidth;
+  el.classList.add('fade');
+}
+function setChoices(id, list, dayIdx, step){
+  var html = '';
+  for (var i=0;i<list.length;i++){
+    html += '<button class="btn" onclick="pick('+dayIdx+','+step+','+i+')">'+list[i].label+'</button>';
+  }
+  $(id).innerHTML = html;
+}
+function setNext(id, label, fn){
+  $(id).innerHTML = '<button class="btn btn-primary" onclick="'+fn+'">'+label+'</button>';
+}
+
+/* ===== 流程 ===== */
+function start(){
+  S = { stats:{仕:5,文:5,情:5,旷:5}, day:0, step:0 };
+  renderStats(); renderDots(0);
+  enterDay(0);
+}
+function enterDay(i){
+  S.day = i; S.step = 0;
+  var d = DAYS[i];
+  setText('d'+(i+1)+'-text', d.intro);
+  setChoices('d'+(i+1)+'-choices', [d.c1, d.c2], i, 0);
+  show('view-d'+(i+1));
+  renderDots(i);
+}
+function pick(dayIdx, step, which){
+  var d = DAYS[dayIdx];
+  var ch = (step===0) ? (which===0 ? d.c1 : d.c2) : (which===0 ? d.m1 : d.m2);
+  applyEffect(ch.effect);
+  var txt = ch.result;
+  if (step===0 && dayIdx<5){
+    txt += '\n\n' + d.mid;
+    setText('d'+(dayIdx+1)+'-text', txt);
+    setChoices('d'+(dayIdx+1)+'-choices', [d.m1, d.m2], dayIdx, 1);
+  } else if (step===0 && dayIdx===5){
+    setText('d6-text', txt);
+    setNext('d6-choices', '看　结　局', 'toEnd()');
+  } else {
+    txt += '\n\n' + d.outro;
+    setText('d'+(dayIdx+1)+'-text', txt);
+    setNext('d'+(dayIdx+1)+'-choices', '下　一　日', 'enterDay('+(dayIdx+1)+')');
+  }
+}
+function toEnd(){
+  var k = S.stats.旷, t, txt;
+  if (k>=11){ t='也无风雨也无晴'; txt='弥留之际，你看见二十二年前湖州船上的自己。他隔着时光问你：此去黄州，值不值？\n\n你答：值。\n\n然后你睁开眼——元丰二年七月二十八日的船舱里，你醒了。\n\n全游戏结束的一瞬，才是开始。'; }
+  else if (k>=7){ t='此心安处是吾乡'; txt='你走得很平静。一生起落，你没有悔。诗文传世，故人无恙，此生已足。\n\n此心安处，便是吾乡。'; }
+  else { t='人生识字忧患始'; txt='你走时还皱着眉。一辈子被诗所累，又被诗所救，可你至死没能与它和解。\n\n人生识字忧患始，姓名粗记可以休。'; }
+  $('end-title').textContent = t;
+  setText('end-text', txt);
+  var rec = '';
+  for (var i=0;i<STAT_KEYS.length;i++){
+    var key = STAT_KEYS[i], v = Math.min(10, Math.round(S.stats[key]));
+    var segs = '';
+    for (var j=0;j<10;j++) segs += (j<v) ? '<i class="on"></i>' : '<i></i>';
+    rec += '<div class="cell"><b>'+key+'</b><span>'+S.stats[key]+'</span><span class="bar">'+segs+'</span></div>';
+  }
+  $('recap').innerHTML = rec;
+  show('view-end');
+}
+
+/* ===== 事件 ===== */
+$('btn-start').onclick = start;
+$('btn-restart').onclick = start;
+</script>
+</body>
+</html>
